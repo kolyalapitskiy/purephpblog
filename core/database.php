@@ -23,4 +23,8 @@ class Database {
 
         return $blogs;
     }
+
+    public function getPdo() {
+        return $this->connection;
+    }
 }

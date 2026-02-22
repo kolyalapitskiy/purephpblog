@@ -65,6 +65,115 @@ $blogs = $db->query();
             font-style: italic;
         }
 
+        /* Form Styles */
+        .comment-form-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .comment-form-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-form-title:before {
+            content: '✍️';
+            font-size: 1.2em;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.9em;
+            color: #555;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input:hover,
+        .form-group textarea:hover {
+            border-color: #764ba2;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:before {
+            content: '📝';
+            font-size: 1.2em;
+        }
+
         /* Blog Post Cards */
         .blog-post {
             background: white;
@@ -252,16 +361,10 @@ $blogs = $db->query();
             .post-title {
                 font-size: 1.5em;
             }
-        }
 
-        /* Loading Animation for Posts */
-        .blog-post {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .blog-post::after {
-            display: none;
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Custom Scrollbar */
@@ -292,10 +395,33 @@ $blogs = $db->query();
     </header>
 
     <main>
+        <!-- Красивая форма комментариев -->
+        <div class="comment-form-section">
+            <h2 class="comment-form-title">Добавить комментарий</h2>
+            <form class="comment-form" action="add_comment.php" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Ваше имя</label>
+                        <input type="text" id="name" name="name" placeholder="Как вас зовут?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="blog_id">ID поста</label>
+                        <input type="number" id="blog_id" name="blog_id" placeholder="Номер поста" value="1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment_body">Комментарий</label>
+                    <textarea id="comment_body" name="comment_body" placeholder="Напишите что-нибудь..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Отправить комментарий</button>
+            </form>
+        </div>
+
         <?php foreach ($blogs as $blog) : ?>
             <article class="blog-post">
                 <h2 class="post-title"><?= htmlspecialchars($blog['title']) ?></h2>
-                <h2 class="post-title"><?= htmlspecialchars($blog['post_body']) ?></h2>
 
                 <div class="post-meta">
                     <span class="timestamp"><?= htmlspecialchars($blog['created_at']) ?></span>
@@ -307,10 +433,10 @@ $blogs = $db->query();
 
                 <?php if (!empty($blog['comments'])) : ?>
                     <div class="comments-section">
-                        <h3 class="comments-title">Comments</h3>
+                        <h3 class="comments-title">Комментарии</h3>
                         <?php foreach ($blog['comments'] as $comment) : ?>
                             <div class="comment">
-                                <div class="comment-author">Vova</div>
+                                <div class="comment-author"><?= htmlspecialchars($comment['name'] ?? 'Аноним') ?></div>
                                 <div class="comment-text"><?= htmlspecialchars($comment['comment_body']) ?></div>
                             </div>
                         <?php endforeach; ?>
